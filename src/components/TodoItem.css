@@ -1,0 +1,22 @@
+.Todo-Item {
+    background-color: #c5c4ef;
+    border: 1px solid #c5c4ef;
+    border-radius: 1em;
+    padding: 0.5em;
+    margin-bottom: 0.5em;
+    list-style-type: none;
+}
+
+.Todo-Item:last-of-type{
+    margin-bottom: 0;
+}
+
+.Todo-Complete {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.Todo-Item.complete {
+    background-color: #cfcef9;
+    color: #acabcf;
+}
