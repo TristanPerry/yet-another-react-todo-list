@@ -1,75 +1,72 @@
 import React, {Component} from 'react';
+import { connect } from 'react-redux';
+import { addTodoItem } from '../actions';
 import logo from '../images/logo.svg';
-import TodoItem from '../components/TodoItem';
+import TodoList from '../components/TodoList';
+import { TODO } from '../constants/TodoTypes';
 import './App.css';
+import uuidv1 from "uuid";
+import PropTypes from "prop-types";
 
-class App extends Component {
+const mapDispatchToProps = dispatch => {
+    return {
+        addTodoItem: todoItem => dispatch(addTodoItem(todoItem))
+    };
+};
+
+class ConnectedApp extends Component {
     constructor(props) {
         super(props);
         this.state = {
             'textInput' : '',
-            'todoList' : [
-                this.buildTodoItem('todo', 'Brush up on React'),
-                this.buildTodoItem('complete', 'Install Node'),
-                this.buildTodoItem('todo', 'Convert to Redux'),
-                this.buildTodoItem('todo', 'Use more ES6 syntax'),
-                this.buildTodoItem('todo', 'Add some unit tests'),
-            ],
         }
     }
 
-    formSubmitted = (event) => {
+    handleSubmit = (event) => {
         event.preventDefault();
 
+        const { textInput } = this.state;
+        const id = uuidv1();
+
+        this.props.addTodoItem({id : id, status : TODO, value : textInput}); // dispatch Redux action
+
         this.setState({
-            'todoList' : [...this.state.todoList, this.buildTodoItem('todo', this.state.textInput)],
             'textInput' : ''
         });
     }
 
-    buildTodoItem(status, value) {
-        return {
-            status,
-            value,
-        };
-    }
-
-    todoItemInput = (event) => {
-        this.setState({'textInput' : event.target.value})
-    }
-
-    markAsComplete = (index) => {
-        // TODO Am I incorrectly mutating state here?
-        let newTodoList = this.state.todoList.map((item, itemIndex) => {
-            if (index === itemIndex) {
-                item.status = 'complete';
-            }
-            return item;
-        });
-        this.setState({'todoList' : newTodoList});
+    handleChange = (event) => {
+        this.setState({ [event.target.id] : event.target.value })
     }
 
     render() {
+        const { textInput } =  this.state;
         return (
             <div className="App">
                 <header className="App-header">
                     <img src={logo} className="App-logo" alt="logo"/>
                     <h1 className="App-title">{this.props.title}</h1>
                 </header>
-                <form className="Form" onSubmit={this.formSubmitted}>
-                    <input type="text" className="Todo-Input" value={this.state.textInput} placeholder={this.props.todoInputPlaceholder} onChange={this.todoItemInput} />
-                    <ul className="TodoList">
-                        {this.state.todoList.map((item, index) => <TodoItem item={item} key={index} markAsComplete={this.markAsComplete.bind(this, index)} />)}
-                    </ul>
+                <form className="Form" onSubmit={this.handleSubmit}>
+                    <input type="text" id="textInput" className="Todo-Input" value={textInput} placeholder={this.props.todoInputPlaceholder} onChange={this.handleChange} />
+                    <TodoList />
                 </form>
             </div>
         );
     }
 }
 
-App.defaultProps = {
+ConnectedApp.defaultProps = {
     'title' : 'Yet Another React Todo List',
     'todoInputPlaceholder' : 'Enter new todo item here...',
 };
+
+ConnectedApp.propTypes = {
+    title : PropTypes.string.isRequired,
+    todoInputPlaceholder : PropTypes.string.isRequired,
+    addTodoItem : PropTypes.func.isRequired,
+};
+
+const App = connect(null, mapDispatchToProps)(ConnectedApp);
 
 export default App;

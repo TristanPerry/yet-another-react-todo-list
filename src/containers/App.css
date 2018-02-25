@@ -24,13 +24,6 @@ input.Todo-Input {
   font-size: 115%;
 }
 
-.TodoList {
-  border: 1px dashed #a9a9cb;
-  padding: 5em;
-  margin: 2em;
-  background-color: #d5d4ff;
-}
-
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
